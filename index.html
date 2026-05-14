@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Doer — Excellence is a habit.</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Syne:wght@400;700;800&display=swap"
+		rel="stylesheet">
+	<style>
+		*,
+		*::before,
+		*::after {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--black: #050505;
+			--off-white: #f5f2ec;
+			--gold: #c9a84c;
+			--gold-light: #e8c96a;
+			--gold-dim: #7a6030;
+			--teal: #4ecdc4;
+			--text-muted: rgba(245, 242, 236, 0.4);
+		}
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		body {
+			background: var(--black);
+			color: var(--off-white);
+			font-family: 'DM Mono', monospace;
+			overflow-x: hidden;
+			cursor: none;
+		}
+
+		.cursor {
+			width: 10px;
+			height: 10px;
+			background: var(--gold);
+			border-radius: 50%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			pointer-events: none;
+			z-index: 9999;
+			mix-blend-mode: difference;
+		}
+
+		.cursor-ring {
+			width: 36px;
+			height: 36px;
+			border: 1px solid rgba(201, 168, 76, 0.4);
+			border-radius: 50%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			pointer-events: none;
+			z-index: 9998;
+			transition: transform 0.4s cubic-bezier(.17, .67, .46, .95);
+		}
+
+		/* NAV */
+		nav {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			z-index: 100;
+			padding: 20px 48px;
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			background: linear-gradient(to bottom, rgba(5, 5, 5, 0.9), transparent);
+		}
+
+		.nav-links {
+			display: flex;
+			gap: 40px;
+			list-style: none;
+		}
+
+		.nav-links a {
+			font-size: 11px;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			color: rgba(245, 242, 236, 0.4);
+			text-decoration: none;
+			transition: color 0.2s;
+		}
+
+		.nav-links a:hover {
+			color: var(--off-white);
+		}
+
+		.nav-cta {
+			background: var(--off-white);
+			color: var(--black);
+			font-family: 'DM Mono', monospace;
+			font-size: 11px;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			padding: 10px 24px;
+			text-decoration: none;
+			transition: background 0.2s;
+			margin-left: 32px;
+		}
+
+		.nav-cta:hover {
+			background: var(--gold);
+		}
+
+		/* HERO */
+		.hero {
+			height: 85vh;
+			min-height: 600px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			position: relative;
+			padding: 80px 48px 40px;
+			overflow: hidden;
+		}
+
+		.hero-bg-glow {
+			position: absolute;
+			width: 600px;
+			height: 600px;
+			border-radius: 50%;
+			background: radial-gradient(circle, rgba(201, 168, 76, 0.08) 0%, transparent 60%);
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			animation: pulse-glow 7s ease-in-out infinite;
+		}
+
+		@keyframes pulse-glow {
+
+			0%,
+			100% {
+				opacity: 0.5;
+				transform: translate(-50%, -50%) scale(1);
+			}
+
+			50% {
+				opacity: 1;
+				transform: translate(-50%, -50%) scale(1.1);
+			}
+		}
+
+		.hero-title {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: clamp(60px, 10vw, 130px);
+			font-weight: 300;
+			line-height: 0.9;
+			text-align: center;
+			letter-spacing: -0.02em;
+			color: var(--off-white);
+			opacity: 0;
+			animation: fade-up 1s 0.2s forwards;
+		}
+
+		.hero-title em {
+			font-style: italic;
+			color: var(--gold);
+		}
+
+		.hero-sub {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: clamp(18px, 2.5vw, 26px);
+			font-weight: 300;
+			font-style: italic;
+			color: rgba(245, 242, 236, 0.4);
+			margin-top: 20px;
+			text-align: center;
+			opacity: 0;
+			animation: fade-up 1s 0.4s forwards;
+		}
+
+		.hero-cta {
+			margin-top: 40px;
+			display: flex;
+			gap: 20px;
+			align-items: center;
+			opacity: 0;
+			animation: fade-up 1s 0.6s forwards;
+		}
+
+		.btn-primary {
+			background: var(--off-white);
+			color: var(--black);
+			font-family: 'DM Mono', monospace;
+			font-size: 12px;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			padding: 14px 32px;
+			border: none;
+			cursor: none;
+			text-decoration: none;
+			display: inline-block;
+			transition: background 0.2s, transform 0.2s;
+		}
+
+		.btn-primary:hover {
+			background: var(--gold);
+			transform: translateY(-2px);
+		}
+
+		/* COMPACT TYPOGRAPHY */
+		.section-tag {
+			font-size: 10px;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+			color: var(--gold-dim);
+			margin-bottom: 12px;
+			display: block;
+		}
+
+		.section-title {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: clamp(32px, 4vw, 48px);
+			font-weight: 300;
+			line-height: 1.1;
+			margin-bottom: 16px;
+		}
+
+		.section-title em {
+			font-style: italic;
+			color: var(--gold);
+		}
+
+		.section-body {
+			font-size: 12px;
+			line-height: 1.6;
+			color: rgba(245, 242, 236, 0.5);
+			max-width: 400px;
+		}
+
+		/* SPHERE SECTION - REWRITTEN FOR STABILITY */
+		.sphere-section {
+			padding: 80px 48px;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 60px;
+			align-items: center;
+			max-width: 1100px;
+			margin: 0 auto;
+		}
+
+		.sphere-canvas-wrap {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			/* Ставимо елементи в стовпчик: спочатку текст, потім сфера */
+			justify-content: center;
+			align-items: center;
+			min-height: 450px;
+		}
+
+		.sphere-overlay-text {
+			/* Тепер це не абсолютний елемент, він просто стоїть зверху */
+			margin-bottom: 30px;
+			text-align: center;
+			z-index: 10;
+		}
+
+		.sphere-pct {
+			font-family: 'DM Mono', monospace;
+			/* Чистий шрифт для цифр */
+			font-size: 80px;
+			font-weight: 300;
+			color: var(--off-white);
+			letter-spacing: -0.05em;
+			line-height: 1;
+			text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+		}
+
+		.sphere-pct sup {
+			font-size: 32px;
+			color: var(--gold);
+			vertical-align: super;
+			margin-left: 5px;
+		}
+
+		/* THE 3D SPHERE */
+		.sphere-3d {
+			width: 260px;
+			height: 260px;
+			border-radius: 50%;
+			background:
+				/* Яскравий відблиск як в апці */
+				radial-gradient(circle at 32% 35%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 15%, transparent 30%),
+				/* Зелений рефлекс знизу */
+				radial-gradient(circle at 75% 65%, rgba(60, 180, 130, 0.4) 0%, transparent 50%),
+				/* Основне золото */
+				radial-gradient(circle at 45% 45%, #d8a840 0%, #8c6515 40%, #1f1503 80%, #000000 100%);
+			box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+			animation: sphere-float 6s ease-in-out infinite;
+			position: relative;
+		}
+
+		@keyframes sphere-float {
+
+			0%,
+			100% {
+				transform: translateY(0);
+			}
+
+			50% {
+				transform: translateY(-15px);
+			}
+		}
+
+		/* RINGS - CENTERED AROUND THE SPHERE */
+		.sphere-ring {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			border: 1px solid rgba(201, 168, 76, 0.15);
+			animation: ring-pulse 3s ease-out infinite;
+			pointer-events: none;
+		}
+
+		@keyframes ring-pulse {
+			0% {
+				opacity: 0.6;
+				transform: translate(-50%, -50%) scale(1);
+			}
+
+			100% {
+				opacity: 0;
+				transform: translate(-50%, -50%) scale(1.3);
+			}
+		}
+
+		/* PHILOSOPHY - COMPACT */
+		.philosophy {
+			padding: 60px 48px;
+			max-width: 1000px;
+			margin: 0 auto;
+			text-align: center;
+		}
+
+		.philosophy-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 16px;
+			margin-top: 32px;
+		}
+
+		.phil-card {
+			background: rgba(245, 242, 236, 0.02);
+			border: 1px solid rgba(245, 242, 236, 0.05);
+			padding: 24px;
+			border-radius: 12px;
+			transition: background 0.3s;
+		}
+
+		.phil-card:hover {
+			background: rgba(201, 168, 76, 0.04);
+			border-color: rgba(201, 168, 76, 0.15);
+		}
+
+		.phil-title {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: 22px;
+			font-weight: 300;
+			margin-bottom: 8px;
+			color: var(--gold);
+		}
+
+		.phil-body {
+			font-size: 11px;
+			line-height: 1.5;
+			color: rgba(245, 242, 236, 0.4);
+		}
+
+		/* SCREENSHOTS SECTION */
+		.screenshots-section {
+			padding: 80px 48px;
+			border-top: 1px solid rgba(245, 242, 236, 0.05);
+			background: linear-gradient(to bottom, transparent, rgba(201, 168, 76, 0.02));
+		}
+
+		.screenshots-header {
+			max-width: 1000px;
+			margin: 0 auto 40px;
+			text-align: center;
+		}
+
+		.screens-track {
+			display: flex;
+			gap: 32px;
+			max-width: 1000px;
+			margin: 0 auto;
+			justify-content: center;
+			align-items: center;
+		}
+
+		/* PHONE FRAME REUSABLE */
+		.phone-frame {
+			width: 220px;
+			aspect-ratio: 9/19.5;
+			background: #0a0a0a;
+			border-radius: 32px;
+			border: 2px solid rgba(255, 255, 255, 0.08);
+			position: relative;
+			overflow: hidden;
+			box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+			transition: transform 0.3s ease;
+		}
+
+		.phone-frame:hover {
+			transform: translateY(-5px);
+		}
+
+		.phone-notch {
+			position: absolute;
+			top: 12px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 60px;
+			height: 18px;
+			border-radius: 10px;
+			background: black;
+			z-index: 10;
+		}
+
+		.phone-frame img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.screen-card.featured .phone-frame {
+			width: 260px;
+			border-color: rgba(201, 168, 76, 0.3);
+			box-shadow: 0 40px 80px rgba(201, 168, 76, 0.15);
+		}
+
+		/* STREAKS SECTION - IMAGE FOCUSED */
+		.streaks-section {
+			padding: 80px 48px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			gap: 40px;
+		}
+
+		.streaks-text {
+			max-width: 500px;
+		}
+
+		.streaks-section .phone-frame {
+			width: 280px;
+		}
+
+		/* Larger frame for the streak screenshot */
+
+		/* IDENTITY */
+		.identity-section {
+			padding: 60px 48px;
+			text-align: center;
+		}
+
+		.identity-title {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: clamp(36px, 5vw, 64px);
+			font-weight: 300;
+			line-height: 1;
+			margin: 12px auto 0;
+		}
+
+		.identity-title em {
+			font-style: italic;
+			color: var(--gold);
+		}
+
+		.becoming-words {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			justify-content: center;
+			margin-top: 30px;
+		}
+
+		.becoming-word {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: 20px;
+			font-weight: 300;
+			color: rgba(245, 242, 236, 0.2);
+			padding: 6px 16px;
+			border: 1px solid rgba(245, 242, 236, 0.06);
+			border-radius: 20px;
+			transition: all 0.3s;
+			cursor: none;
+		}
+
+		.becoming-word.active {
+			color: var(--black);
+			background: var(--gold);
+			border-color: var(--gold);
+			font-style: italic;
+		}
+
+		/* FINAL CTA */
+		.final-block {
+			padding: 60px 48px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 24px;
+			border-top: 1px solid rgba(245, 242, 236, 0.05);
+			text-align: center;
+		}
+
+		.final-title {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: clamp(36px, 5vw, 60px);
+			font-weight: 300;
+		}
+
+		.final-title em {
+			font-style: italic;
+			color: var(--gold);
+		}
+
+		footer {
+			padding: 24px 48px;
+			border-top: 1px solid rgba(245, 242, 236, 0.04);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		footer p,
+		.footer-links a {
+			font-size: 10px;
+			color: rgba(245, 242, 236, 0.2);
+			text-decoration: none;
+		}
+
+		.footer-links {
+			display: flex;
+			gap: 20px;
+			list-style: none;
+		}
+
+		.reveal {
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.6s, transform 0.6s;
+		}
+
+		.reveal.visible {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		@keyframes fade-up {
+			from {
+				opacity: 0;
+				transform: translateY(15px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@media (max-width: 900px) {
+
+			.sphere-section,
+			.streaks-section {
+				grid-template-columns: 1fr;
+				padding: 40px 24px;
+				text-align: center;
+			}
+
+			.sphere-section .section-body {
+				margin: 0 auto;
+			}
+
+			.philosophy-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.screens-track {
+				flex-direction: column;
+			}
+
+			.nav-links {
+				display: none;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="cursor" id="cursor"></div>
+	<div class="cursor-ring" id="cursor-ring"></div>
+
+	<nav>
+		<ul class="nav-links">
+			<li><a href="#screens">App</a></li>
+			<li><a href="#philosophy">Philosophy</a></li>
+		</ul>
+		<a href="https://play.google.com/store/apps/details?id=com.OwnYourDay" class="nav-cta">Download →</a>
+	</nav>
+
+	<section class="hero">
+		<div class="hero-bg-glow"></div>
+		<h1 class="hero-title">Become<br><em>Doer.</em></h1>
+		<p class="hero-sub">Excellence is a habit.</p>
+		<div class="hero-cta">
+			<a href="https://play.google.com/store/apps/details?id=com.OwnYourDay" class="btn-primary">Download Free</a>
+		</div>
+	</section>
+
+	<section class="sphere-section">
+		<div class="sphere-canvas-wrap reveal">
+			<div class="sphere-ring"></div>
+			<div class="sphere-ring"></div>
+			<div class="sphere-3d"></div>
+			<div class="sphere-overlay-text">
+				<div class="sphere-pct">100<sup>%</sup></div>
+			</div>
+		</div>
+		<div class="sphere-text reveal">
+			<span class="section-tag">01 — Live Energy</span>
+			<h2 class="section-title">Not just a <em>number.</em></h2>
+			<p class="section-body">
+				Forget boring charts. Your energy is reflected in a living sphere. Complete habits and watch it fill up.
+			</p>
+		</div>
+	</section>
+
+	<section class="screenshots-section" id="screens">
+		<div class="screenshots-header reveal">
+			<span class="section-tag">02 — See it in action</span>
+			<h2 class="section-title">Visual <em>Progress.</em></h2>
+			<p class="section-body" style="margin: 0 auto;">Everything you need to form powerful habits, minimum noise.</p>
+		</div>
+		<div class="screens-track">
+			<div class="screen-card reveal">
+				<div class="phone-frame">
+					<div class="phone-notch"></div>
+					<img src="splash.png" alt="Splash" style="background:#111;" />
+				</div>
+			</div>
+			<div class="screen-card featured reveal">
+				<div class="phone-frame">
+					<div class="phone-notch"></div>
+					<img src="sphere.png" alt="Sphere" style="background:#1a1405;" />
+				</div>
+			</div>
+			<div class="screen-card reveal">
+				<div class="phone-frame">
+					<div class="phone-notch"></div>
+					<img src="habit.png" alt="Habit" style="background:#111;" />
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="streaks-section">
+		<div class="streaks-text reveal">
+			<span class="section-tag">03 — Forgiving Streaks</span>
+			<h2 class="section-title">Streaks that <em>forgive.</em></h2>
+			<p class="section-body" style="margin: 0 auto;">
+				Missed a day? No problem. The app doesn't punish you for rest, but helps you analyze breaks and come back
+				stronger.
+			</p>
+		</div>
+		<div class="reveal">
+			<div class="phone-frame" style="width: 260px;">
+				<div class="phone-notch"></div>
+				<img src="streak.png" alt="Streaks Screenshot" style="background:#111;" />
+			</div>
+		</div>
+	</section>
+
+	<section class="philosophy" id="philosophy">
+		<div class="reveal">
+			<span class="section-tag">04 — Core Beliefs</span>
+			<h2 class="section-title">Why it <em>works.</em></h2>
+		</div>
+		<div class="philosophy-grid">
+			<div class="phil-card reveal">
+				<h3 class="phil-title">Identity</h3>
+				<p class="phil-body">You're not just checking boxes. You're building a new identity through actions.</p>
+			</div>
+			<div class="phil-card reveal">
+				<h3 class="phil-title">Growth</h3>
+				<p class="phil-body">Failure is just information. Analyze and move forward without guilt.</p>
+			</div>
+			<div class="phil-card reveal">
+				<h3 class="phil-title">Energy</h3>
+				<p class="phil-body">Life is unstable. Your stats are based on real energy, not perfect streaks.
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="identity-section">
+		<h2 class="identity-title">Become <em>someone.</em></h2>
+		<div class="becoming-words reveal">
+			<div class="becoming-word active">Doer.</div>
+			<div class="becoming-word">Reader.</div>
+			<div class="becoming-word">Athlete.</div>
+			<div class="becoming-word">Creator.</div>
+		</div>
+	</section>
+
+	<section class="final-block">
+		<h2 class="final-title reveal">Begin <em>today.</em></h2>
+		<a href="#" class="btn-primary">Download App →</a>
+	</section>
+
+	<footer>
+		<p>© 2026 Doer App.</p>
+		<ul class="footer-links">
+			<li><a href="#">Privacy</a></li>
+			<li><a href="#">Terms</a></li>
+		</ul>
+	</footer>
+
+	<script>
+		const cursor = document.getElementById('cursor');
+		const ring = document.getElementById('cursor-ring');
+		let mx = 0, my = 0, rx = 0, ry = 0;
+		document.addEventListener('mousemove', e => {
+			mx = e.clientX; my = e.clientY;
+			cursor.style.transform = `translate(${mx - 5}px,${my - 5}px)`;
+		});
+		(function animRing() {
+			rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+			ring.style.transform = `translate(${rx - 18}px,${ry - 18}px)`;
+			requestAnimationFrame(animRing);
+		})();
+
+		const io = new IntersectionObserver(entries => {
+			entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+		}, { threshold: 0.1 });
+		document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+		const words = document.querySelectorAll('.becoming-word');
+		let cur = 0;
+		setInterval(() => {
+			words[cur].classList.remove('active');
+			cur = (cur + 1) % words.length;
+			words[cur].classList.add('active');
+		}, 2000);
+	</script>
+</body>
+
+</html>
